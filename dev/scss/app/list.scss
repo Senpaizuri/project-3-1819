@@ -1,9 +1,41 @@
 #app{
     .list-company{
-        background: #f1f1f1;
         padding: 2.5rem 2rem;
         margin: 1rem auto;
-        max-width: 30rem;
+        max-width: 1024px;
         list-style: none;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        li{
+            height: 15rem;
+            width:15rem;
+            background: #f1f1f1;
+            padding: 1rem;
+            margin: .5rem;
+            box-shadow: 0 0 20px 0 rgba(0,0,0,.15);
+            transition: .3s ease all;
+            h1{
+                font-size: 1.25rem;
+            }
+            button{
+                padding: .5rem 1rem;
+                text-align: right;
+                position: absolute;
+                right: 1rem;
+                bottom: 1rem;
+                max-width: 13rem;
+                background: none;
+                border: none;
+                font-size: 1rem;
+                transition: .3s ease all;
+                span{
+                    text-decoration: underline;
+                }
+            }
+            &:hover{
+                transform: translate(0 -.5rem);
+            }
+        }
     }
 }
