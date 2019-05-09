@@ -1,0 +1,30 @@
+@import "./fonts/averia.scss";
+
+:root{
+    --mainGray: #333333;
+    --mainWhite: #f1f1f1;
+    --mainYellow: #f2c57c;
+    
+    --bodySize: calc(1px - 1px);
+}
+
+*,*:after,*:before{
+    margin: 0;
+    padding: 0;
+    position: relative;
+    box-sizing: border-box;
+}
+
+body{
+    background: #f2c57c;
+    background: var(--mainYellow);
+    font-family: "averia",sans-serif;
+    font-weight: lighter;
+    overflow: hidden;
+    color: #333333;
+    color: var(--mainGray);
+}
+
+@import "./header/header.scss";
+@import "./app/list.scss";
+
