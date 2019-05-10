@@ -45,7 +45,7 @@ Hence, this app won't work without it.
 
 I tried to also integrate the `kv-staging` data along with the `linkedin` data. However the linkedin api requires request over https, the local build only runs on http to my knowledge.
 
-This is why the app is filled with meager dummy content and could possible be extended to greatness if both ran over https.
+The app is now filled with meager dummy content, the linkedin panel could give a better experience for both parties if this was real data.
 
 ## Whishlist
 
