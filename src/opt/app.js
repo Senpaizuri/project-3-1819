@@ -1,5 +1,4 @@
 (()=>{
-    
     const app = {
         init:async()=>{
             let
@@ -26,7 +25,6 @@
             console.log(data)
         },
         startChat:async(id)=>{
-            console.log(id)
             let
                 tokenData = await app.req("graphql",{
                     method:"POST",
@@ -47,16 +45,141 @@
                         "variables":{"companyId":id,"advertisementId":5}
                     })
                 })
+
+            // Store that fresh session token
             localStorage.setItem("fresh-token",tokenData.data.startChat.session.token)
+            
+            // Who needs Socket.IO?
             let
-                socket = new WebSocket("ws://localhost:5000/subscriptions")
+                socket = new WebSocket("ws://localhost:5000/subscriptions","graphql-ws")
             socket.onmessage = (e)=>{
-                console.log(e.data)
+                let
+                    data = JSON.parse(e.data)
+                switch(data.type){
+                    case "data":
+                        app.render.chatMessage(data)
+                    break;
+                    default:
+                        console.log(e.data)
+                    break;
+                }
             }
             socket.onerror = (err)=>{
                 console.log(err)
             }
-            socket.onopen = function(event) {
+            socket.onopen = await async function(event) {
+                let
+                    agencyData = await app.req("graphql",{
+                        method:"POST",
+                        headers:{
+                            "content-type":"application/json",
+                            "Authorization":`Bearer ${localStorage.getItem("fresh-token")}`
+                        },
+                        body:JSON.stringify({
+                            "operationName":"getAgency",
+                            "query":`query getAgency {
+                                agency {
+                                  id
+                                  name
+                                  textHeader
+                                  textSub
+                                  isAgencyOnline
+                                  __typename
+                                }
+                              }`
+                        })
+                    }),
+                    messages = await app.req("graphql",{
+                        method:"POST",
+                        headers:{
+                            "content-type":"application/json",
+                            "Authorization":`Bearer ${localStorage.getItem("fresh-token")}`
+                        },
+                        body:JSON.stringify({
+                            "operationName":"getMessages",
+                            "query":`query getMessages($take: Int, $sort: MessagesSortingInputType, $skip: Int) {
+                                chat {
+                                  id
+                                  lastModerator {
+                                    id
+                                    person {
+                                      id
+                                      fullName
+                                      __typename
+                                    }
+                                    __typename
+                                  }
+                                  messages(sort: $sort, take: $take, skip: $skip) {
+                                    nodes {
+                                      ...message
+                                      __typename
+                                    }
+                                    count
+                                    totalCount
+                                    page
+                                    totalPages
+                                    hasNextPage
+                                    __typename
+                                  }
+                                  __typename
+                                }
+                              }
+                              
+                              fragment message on MessageType {
+                                id
+                                type
+                                text
+                                senderRole
+                                senderPerson {
+                                  id
+                                  fullName
+                                  picture {
+                                    id
+                                    url
+                                    __typename
+                                  }
+                                  __typename
+                                }
+                                createdAt
+                                type
+                                companies {
+                                  id
+                                  name
+                                  logo {
+                                    id
+                                    url
+                                    __typename
+                                  }
+                                  __typename
+                                }
+                                acceptedCompanies {
+                                  id
+                                  __typename
+                                }
+                                startMessageAnswered
+                                privacyAnswered
+                                companiesAnswered
+                                privacyUrl
+                                attachments {
+                                  id
+                                  originalFilename
+                                  url
+                                  fileSize
+                                  fileType
+                                  __typename
+                                }
+                                __typename
+                              }`,
+                              "variables": {
+                                  skip: 0,
+                                  sort: {
+                                      createdAt: "DESC"
+                                  },
+                                  take: 20
+                              }
+                        })
+                    })
+                app.render.chatWidget(agencyData,messages)
                 console.log("connected")
                 socket.send(JSON.stringify({type: "connection_init", payload: {}}))
                 socket.send(JSON.stringify({
@@ -84,6 +207,7 @@
                     }
                 }))
             }
+            
         },
         render:{
             adv:(data)=>{
@@ -93,8 +217,6 @@
             
                 newUl.classList.add("list-company")
                 
-                console.log(x)
-
                 document.querySelector("span").innerHTML =  ""
 
                 x.companies.forEach(obj => {
@@ -129,6 +251,131 @@
                 })
 
                 document.querySelector("#app").appendChild(newUl)
+            },
+            chatMessage:(data)=>{
+                let
+                    msg = data.payload.data.message,
+                    renderMsg = ()=>{
+                        const
+                            chatBody = document.querySelector(".fresh-chat_body ol"),
+                            newLi = document.createElement("li"),
+                            newP = document.createElement("p"),
+                            newMsg = document.createElement("span"),
+                            newTime = document.createElement("span"),
+                            time = new Date(msg.createdAt)
+
+                        newLi.setAttribute("data-msgID",msg.id)
+                        
+                        newMsg.classList.add("fresh-message")
+                        newMsg.innerHTML = msg.text
+                        newTime.classList.add("fresh-message")
+                        newTime.innerHTML = `${time.getHours()}:${time.getMinutes()}`
+                        
+                        if(msg.senderRole === "candidate"){
+                            newP.classList.add("candidate")
+                            newLi.classList.add("candidate")
+                        }
+
+                        newP.appendChild(newMsg)
+                        newP.appendChild(newTime)
+                        newLi.appendChild(newP)
+                        chatBody.appendChild(newLi)
+                    }
+                if(document.querySelector("[data-msgID]:last-of-type") == null){
+                    renderMsg()
+                }else if(document.querySelector("[data-msgID]:last-of-type").getAttribute("data-msgID") < msg.id){
+                    renderMsg()
+                }
+
+
+            },
+            chatWidget:(agencyData,messagesData)=>{
+                const
+                    newCont = document.createElement("div"),
+                    newHeader = document.createElement("header"),
+                    newH1 = document.createElement("h1"),
+                    newH2 = document.createElement("h2"),
+                    newBody = document.createElement("div"),
+                    newOl = document.createElement("ol"),
+                    newForm = document.createElement("form"),
+                    newInput = document.createElement("input"),
+                    newButton = document.createElement("input"),
+                    newLnkdn = document.createElement("div")
+                let
+                    agency = agencyData.data.agency,
+                    messages = messagesData.data.chat
+
+                newCont.classList.add("fresh-chat")
+
+                newHeader.classList.add("fresh-chat_header")
+                newH1.innerHTML = messages.lastModerator.person.fullName
+                newH2.innerHTML = agency.name
+
+                newHeader.appendChild(newH1)
+                newHeader.appendChild(newH2)  
+                newCont.appendChild(newHeader)
+
+                newBody.classList.add("fresh-chat_body")
+
+                newBody.appendChild(newOl)
+                newCont.appendChild(newBody)
+
+                newForm.classList.add("fresh-chat_input")
+                newInput.setAttribute("type","text")
+                newInput.setAttribute("placeholder","Type a message")
+                newButton.setAttribute("type","submit")
+                newButton.setAttribute("value","submit")
+                
+                newForm.addEventListener("submit",(e)=>{
+                    e.preventDefault()
+                    let 
+                        msg = newForm.querySelector("input[type='text']").value
+                    if(msg.length >0){
+                        app.req("graphql",{
+                            method:"POST",
+                            headers:{
+                                "content-type":"application/json",
+                                "Authorization":`Bearer ${localStorage.getItem("fresh-token")}`
+                            },
+                            body:JSON.stringify({
+                                "query":`mutation ($message: AddMessageInputType) {
+                                    addMessage(message: $message) {
+                                        success
+                                        __typename
+                                    }
+                                }`,
+                                "variables":{"message":{"text":msg}}
+                            })
+                        }).then(()=>{
+                            newForm.querySelector("input[type='text']").value = ""
+                            newLnkdn.classList.add("active")
+                            newCont.classList.add("active")
+                        })
+                    }
+                })
+
+                newForm.appendChild(newInput)
+                newForm.appendChild(newButton)
+                newCont.appendChild(newForm)
+
+                newLnkdn.classList.add("fresh-chat_linkedin")
+                newLnkdn.innerHTML = `
+                    <header>
+                        LinkedIn: Werkgever
+                    </header>
+                    <div class="linkedin-body">
+                        <h1>Who are we?</h1>
+                        <div class="text">Lorem ipsum</div>
+                        <div class="text">Lorem ipsum</div>
+                        <h1>What do we offer?</h1>
+                        <div class="text">Lorem ipsum</div>
+                        <div class="text">Lorem ipsum</div>
+                    </div>
+                `
+
+                newCont.appendChild(newLnkdn)
+
+                document.querySelector("#app").appendChild(newCont)
             }
         }
     }

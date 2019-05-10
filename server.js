@@ -23,16 +23,12 @@ app.get("/auth/linkedin",(req,res)=>{
     res.render(res)
 })
 
+app.get("/admin",(req,res)=>{
+    res.send("hi")
+})
+
 http.listen(port,()=>{
     console.log(
         `App listening to port: ${port}`
     )
-})
-
-io.on("connection",(socket)=>{
-    console.log("Connected")
-    socket.emit("connection",{"msg":"You've been connected"})
-    socket.on("disconnect",()=>{
-        console.log("Disconnected")
-    })
 })

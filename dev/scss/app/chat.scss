@@ -1,0 +1,69 @@
+.fresh-chat{
+    height: 600px;
+    width: 30rem;
+    background: #fff;
+    position: fixed;
+    left: calc(50% - 15rem);
+    top: calc(50% - 300px);
+    border-radius: 5px;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, .15);
+    transition: .3s ease all;
+    &.active{
+        left: calc(50% - 30rem);
+    }
+    > *{
+        background: #fff;
+        padding: 1rem 2rem;
+    }
+    .fresh-chat_body{
+        height: calc(600px - 7rem);
+        overflow-y: scroll;
+        ol{
+            list-style: none;
+            li{
+                display: flex;
+                justify-content: flex-start;
+                &.candidate{
+                    justify-content: flex-end;
+                }
+            }
+            p{
+                display: inline-block;
+                padding: .5rem 1.5rem;
+                padding-right: 4rem;
+                margin-bottom: 1rem;
+                box-shadow: 0 0 5px 0 rgba(0, 0, 0, .15);
+                background: #f1f1f1;
+                .fresh-message{
+                    &:last-child{
+                        position: absolute;
+                        right: .5rem;
+                        bottom: .25rem;
+                    }
+                }
+                &.candidate{
+                    background: #abc;
+                    text-align: right;
+                }
+            }
+        }
+    }
+    .fresh-chat_input{
+        position: absolute;
+        bottom: 0;
+        background: #fff;
+    }
+    .fresh-chat_linkedin{
+        position: absolute;
+        top: 0%;
+        left: 0;
+        width: 100%;
+        background: #abc;
+        color: #fff;
+        transition: .3s ease all;
+        z-index: -1;
+        &.active{
+            left: 100%;
+        }
+    }
+}

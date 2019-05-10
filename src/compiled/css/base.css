@@ -36,16 +36,17 @@ body {
   color: #333333;
   color: var(--mainGray); }
 
-header {
-  padding: 2rem; }
-  header h1 {
+body > header {
+  padding: 2rem;
+  padding-bottom: 0; }
+  body > header h1 {
     text-align: center; }
-  header span {
+  body > header span {
     text-align: center;
     display: block; }
 
 #app .list-company {
-  padding: 2.5rem 2rem;
+  padding: 1rem 2rem;
   margin: 1rem auto;
   max-width: 1024px;
   list-style: none;
@@ -77,3 +78,58 @@ header {
         text-decoration: underline; }
     #app .list-company li:hover {
       transform: translate(0 -0.5rem); }
+
+.fresh-chat {
+  height: 600px;
+  width: 30rem;
+  background: #fff;
+  position: fixed;
+  left: calc(50% - 15rem);
+  top: calc(50% - 300px);
+  border-radius: 5px;
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.15);
+  transition: .3s ease all; }
+  .fresh-chat.active {
+    left: calc(50% - 30rem); }
+  .fresh-chat > * {
+    background: #fff;
+    padding: 1rem 2rem; }
+  .fresh-chat .fresh-chat_body {
+    height: calc(600px - 7rem);
+    overflow-y: scroll; }
+    .fresh-chat .fresh-chat_body ol {
+      list-style: none; }
+      .fresh-chat .fresh-chat_body ol li {
+        display: flex;
+        justify-content: flex-start; }
+        .fresh-chat .fresh-chat_body ol li.candidate {
+          justify-content: flex-end; }
+      .fresh-chat .fresh-chat_body ol p {
+        display: inline-block;
+        padding: .5rem 1.5rem;
+        padding-right: 4rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.15);
+        background: #f1f1f1; }
+        .fresh-chat .fresh-chat_body ol p .fresh-message:last-child {
+          position: absolute;
+          right: .5rem;
+          bottom: .25rem; }
+        .fresh-chat .fresh-chat_body ol p.candidate {
+          background: #abc;
+          text-align: right; }
+  .fresh-chat .fresh-chat_input {
+    position: absolute;
+    bottom: 0;
+    background: #fff; }
+  .fresh-chat .fresh-chat_linkedin {
+    position: absolute;
+    top: 0%;
+    left: 0;
+    width: 100%;
+    background: #abc;
+    color: #fff;
+    transition: .3s ease all;
+    z-index: -1; }
+    .fresh-chat .fresh-chat_linkedin.active {
+      left: 100%; }

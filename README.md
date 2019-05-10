@@ -21,3 +21,12 @@ LinkedIn offers a broad scala of usable data served over HTTPS/OAuth2. However m
 To get the most out of LinkedIn you need to be a signedup with the **LinkedIn Partner Program**.
 
 With the [Profiles](https://docs.microsoft.com/en-us/linkedin/shared/references/v2/profile) endoints you can just straightup request [the applicants account data](https://docs.microsoft.com/en-us/linkedin/shared/integrations/people/profile-api?context=linkedin/consumer/context#retrieve-other-members-profile).
+
+## Fresh Jobs "Client"
+
+The FreshJobs client uses the data from the `kv-staging.lifely.nl` local build.
+Hence, this app won't work without it.
+
+I tried to also integrate the `kv-staging` data along with the `linkedin` data. However the linkedin api requires request over https, the local build only runs on http to my knowledge.
+
+This is why the app is filled with meager dummy content and could possible be extended to greatness if both ran over https.
