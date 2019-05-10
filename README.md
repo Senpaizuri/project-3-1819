@@ -49,5 +49,5 @@ This is why the app is filled with meager dummy content and could possible be ex
 
 ## Whishlist
 
-[ ] - Add Proper LinkedIn request
-[ ] - Add request for LinkedIn from the Moderator panel 
+- [ ] Add Proper LinkedIn request
+- [ ] Add request for LinkedIn from the Moderator panel 
