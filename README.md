@@ -15,6 +15,22 @@ While the intermediary get to see the applicants profile, the applicant gets to 
 I think this wil greatly boost conversion to actual people hired.
 Since they both know what the other one wants it's probably easier to ask questions relating to the applicant or business said applicant is applying to.
 
+### Basic access
+
+When you sign up for basic access you can call to the `r_liteprofile` endpoint.
+Here you can **only** get data from a user if he/she has signed in.
+The data is very minimal, you can only access these fields
+
+- `firstName`
+- `lastName`
+- `profilePicture`
+
+### "Full" Access
+
+If you are accepted by LinkedIn as a partner you get access to the `r_basicprofile` [Basic profile](https://docs.microsoft.com/en-us/linkedin/shared/references/v2/profile/basic-profile?context=linkedin/consumer/context) and `r_fullprofile` [Full profile](https://docs.microsoft.com/en-us/linkedin/shared/references/v2/profile/full-profile?context=linkedin/consumer/context).
+
+If you use these within the candidate and moderater client you can provide more insight and get possibly better conversations.
+
 # LinkedIn Developers
 
 LinkedIn offers a broad scala of usable data served over HTTPS/OAuth2. However most data is not easily retrieved.
@@ -30,3 +46,8 @@ Hence, this app won't work without it.
 I tried to also integrate the `kv-staging` data along with the `linkedin` data. However the linkedin api requires request over https, the local build only runs on http to my knowledge.
 
 This is why the app is filled with meager dummy content and could possible be extended to greatness if both ran over https.
+
+## Whishlist
+
+[ ] - Add Proper LinkedIn request
+[ ] - Add request for LinkedIn from the Moderator panel 
